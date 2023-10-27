@@ -4,6 +4,10 @@ MMM-MailMessage is a module for the MagicMirror² project by Michael Teeuw.  It 
 ## Screenshot
 
 ![image](https://github.com/Unclearogre/MMM-MailMessage/assets/149137077/a5b2afa3-3956-461e-a004-1e9d6da8ec60)
+Note that this example shows messages from two separate e-mails.
+
+![image](https://github.com/Unclearogre/MMM-MailMessage/assets/149137077/a0d10634-842b-429e-8323-47fbfec1599e)
+This message was sent with a warning modifier (see the Usage section below).
 
 ## Installation
 Clone the MMM-MailMessage repository:
