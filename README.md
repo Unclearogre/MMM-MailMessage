@@ -5,7 +5,7 @@ MMM-MailMessage is a module for the MagicMirror² project by Michael Teeuw.  It 
 Clone the MMM-MailMessage repository:
 ```shell
 cd ~/MagicMirror/modules
-git clone https:….
+git clone https://github.com/Unclearogre/MMM-MailMessage
 ```
 
 Next, get the dependencies:
