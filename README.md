@@ -1,6 +1,10 @@
 # MMM-MailMessage
 MMM-MailMessage is a module for the MagicMirror² project by Michael Teeuw.  It allows you to display messages sent in the subject line of an e-mail message.  This means that approved users can post a message on the mirror from anywhere they have access to their e-mail.  
 
+## Screenshot
+
+![image](https://github.com/Unclearogre/MMM-MailMessage/assets/149137077/a5b2afa3-3956-461e-a004-1e9d6da8ec60)
+
 ## Installation
 Clone the MMM-MailMessage repository:
 ```shell
