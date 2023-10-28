@@ -1,0 +1,17 @@
+{
+  "name": "MMM-MailMessage",
+  "description": "Module to display messages from the subjects of incoming e-mail.",
+  "keywords": [
+    "email",
+    "mirror",
+    "messages",
+    "announcements",
+    "smart mirror",
+    "mirror announcements"
+  ],
+  "version": "0.0.1",
+  "dependencies": {
+    "util": "^0.10.0",
+    "emailjs-imap-client": "^2.0.0"
+  }
+}
