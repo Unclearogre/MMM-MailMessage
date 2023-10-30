@@ -65,7 +65,8 @@ If the subject line starts with one of the allowed modifiers, the color of the m
 | Port | The port your host uses for imap access.  | Integer | 993 |
 | subjectlength | Messages longer than this will be truncated to this length. | Integer | 50 |
 | validSenders | A list of valid e-mail addresses that are allowed to send messages to the MagicMirror².  E-mail from an address not included here will not be displayed.  If not specified, any e-mail received will have its subject line displayed.  See additional notes on the validSenders array below. | Array of Arrays | [[]] |
-| daysToDisplay | Specifies the number of days back in time to get messages; 0 is today only, 1 is today and yesterday, 6 is the past week.  Note that a "day" is a 24 hour block of time relative to the current time.  | Integer | 0 |
+| daysToDisplay | Specifies the number of days to look back in time for messages.  If set to zero (default), only messages less than 24 hours old will be displayed, depending on the setting of minsToDisplay.  Note that a “day” is a 24 hour block of time relative to the current time.  | Integer | 0 |
+| minsToDisplay | Specifies the number of minutes to look back in time for messages.  This works in concert with daysToDisplay.  To show only messages received in the last hour, set this to 60 and daysToDisplay to 0.  For the last 24 hours, set this to 0 and daysToDisplay to 1.  | Integer | 180 |
 | msgsToDisplay | A limit on the number of messages to be displayed on the MagicMirror².  Note that this number is used prior to the verification of a valid sender so fewer e-mails than this may be shown if one or more are discarded for being from an unknown sender. | Integer | 2 |
 | colorText | Allows you to specify the default color of messages. | String | None |
 | colorImport | Specifies the color for messages marked as Important. | String | #ff0000 (Red) |
