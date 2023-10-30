@@ -3,7 +3,7 @@
  * MMM-MailMessage
  *
  * This module looks for e-mails set to a specific address and displays the 
- * subject line on the MagicMirror².  
+ * subject line on the MagicMirrorï¿½.  
  *
  * It is heavily based on the MMM-Mail module by MMPieps found here:
  * https://github.com/MMPieps/MMM-Mail
@@ -26,6 +26,7 @@ Module.register("MMM-MailMessage",{
 		pass:           '',
 		subjectlength:  50,
 		daysToDisplay:  0,
+		minsToDisplay:  0,
 		msgsToDisplay:  2,
 		colorImport:    "#ff0000",
 		colorGood:      "#00ff00",
@@ -82,32 +83,107 @@ Module.register("MMM-MailMessage",{
 
 // ! = Important (default = red), + = Good News (def = green), * = Warn (Def = Yellow/Orange)
 		const MODIFIERS = [ "!", "+", "*" ]; 
+		const MIN_PER_DAY = 1440;
+		
+		console.log("Starting MailMessage");
 		
         var that = this;
+		var msgCount = 0;
 
-		if(this.messages.length > 0)
+		if (this.messages.length > 0)
         {
 
 //-----------------------------------------------------------------------------
 //  We're using the slice method to get the first N messages where N is 
 //  the msgsToDisplay option from the config file.  The default value is 2.
 
-            this.messages.slice(0,this.config.msgsToDisplay).forEach(function (mailObj) {
+/*  Debug
+			for (let thisMail of this.messages) {
+				console.log("Message Found - Subject: " + thisMail.subject);
+				console.log("                Date:    " + thisMail.date);
+			}
+*/
 
-                var subject = mailObj.subject.replace(/[\['"\]]+/g,"");
+
+//            this.messages.slice(0,this.config.msgsToDisplay).forEach(function (mailObj) {
+			for (let thisMail of this.messages) {
+
+                var subject = thisMail.subject.replace(/[\['"\]]+/g,"");
+
+				console.log("Message Found - Subject: " + subject);
+				console.log("                Date:    " + thisMail.date);
+				
+				// Trim leading spaces
+				subject = subject.replace(/^\s+/gm,'');
 
 //				var daysOffset = that.config.daysToDisplay * -1;
 //				var limitDate = moment().add(daysOffset, 'days');
 //				var now = moment().add(5, 'days');
 
 //  Here we calculate how many days ago the message was sent.  0 = today.
-				var daysAgo = 0;
-				daysAgo = moment().diff(mailObj.date, "days");
+//				var minutesAgo = 0;
+//				minutesAgo = moment().diff(thisMail.date, "days");
+				var minutesAgo = 0;
+				minutesAgo = moment().diff(thisMail.date, "minutes");
+				
+//				console.log("minutesAgo: " + minutesAgo);
+				
+//				console.log("daysToDisplay: " + that.config.daysToDisplay + "  Min per Day: " + MIN_PER_DAY + "  minsToDisplay: " + that.config.minsToDisplay);
+				
+				var dispTime = (that.config.daysToDisplay * MIN_PER_DAY) + that.config.minsToDisplay;
+				if (dispTime <= 0) { 
+					dispTime = 180; 
+				}
+				
+//				console.log("dispTime: " + dispTime);
+				
+/*
+//  Look for duration in "[dd:mmmm]" format
+
+					// Trim leading spaces
+					subject = subject.replace(/^\s+/gm,'');
+
+					var minDuration = -1;
+					//var subjDays = 0;
+					var subjTime = 0;
+					
+					var openBracket = subject.indexOf("<");
+					var closeBracket = subject.indexOf(">");
+					
+					console.log("Open Bracket at: " + openBracket + "  Close Bracket at: " + closeBracket);
+					
+					if (openBracket  >= 0 && openBracket  <= 1 &&
+						closeBracket <= 6 && closeBracket >  0 &&
+						openBracket  <  closeBracket				) {
+						var locColon = subject.indexOf(":");
+						if (locColon < 0) { 
+							subjTime = +subject.substring(openBracket + 1,closeBracket - 1);
+						} else {
+							// subjDays = +subject.substring(openBracket + 1,locColon - 1);
+							subjTime = +subject.substring(locColon + 1,closeBracket - 1) + (+subject.substring(openBracket + 1,locColon - 1) * 1440);
+						}
+						if (openBracket <= 0) {
+							leadSubject = "";
+						} else {
+							leadSubject = subject.substring(0, openBracket)
+						}
+						
+						console.log("Lead Subject: " + leadSubject + "  Subject rem: " + subject.substring(closeBracket + 1, subject.length));
+						
+						subject = leadSubject + subject.substring(closeBracket + 1, subject.length);
+						if (dispTime > subjTime) {
+							dispTime = subjTime;
+						}
+					}
+
+					// Trim leading spaces
+					subject = subject.replace(/^\s+/gm,'');
+*/
 
 //  Now we go through the list of valid senders to make sure the message came
 //  from someone allowed to post messages.  If not, we ignore it. 
 				let selSender = that.config.validSenders.filter(mySender => {
-					if (mySender.addr.toLowerCase() == mailObj.sender[0].address.toLowerCase()) 
+					if (mySender.addr.toLowerCase() == thisMail.sender[0].address.toLowerCase()) 
 						return true
 					 else 
 						return false
@@ -116,8 +192,10 @@ Module.register("MMM-MailMessage",{
 //  If the sender was legit and it's not too old (or in the future), we start
 //  building the message for display in messageWrapper.
 				if (selSender.length > 0 && 
-				   (daysAgo >= 0 && daysAgo <= that.config.daysToDisplay)          ) {
+				   (minutesAgo >= 0 && minutesAgo <= dispTime) ) {
 
+					console.log("Found e-mail with valid sender and time");
+					
 	                const messageWrapper = document.createElement("span");
 
 
@@ -150,13 +228,18 @@ Module.register("MMM-MailMessage",{
 					}
 					  
 
+				
 //-----------------------------------------------------------------------------
 //  If a maximum length was set in the config, we'll trim the message to 
 //  that length.  Note: we do this after removing the modifier but before
 //  any other modifications (such as adding sender name).
 					//cut the subject
-					if(subject.length > that.config.subjectlength)
+					if (subject.length > that.config.subjectlength)
 					{
+//						if (that.config.longScroll) {
+//							messageWrapper. = add code to make message scroll...
+				        
+							
 						subject = subject.substring(0,that.config.subjectlength);
 					}
 
@@ -187,8 +270,16 @@ Module.register("MMM-MailMessage",{
 					// add a break
 					wrapper.appendChild(document.createElement("BR"));
 
+					msgCount++;
 				}
-            });
+				
+				console.log("Checking msg cnt: " + msgCount);
+				
+ 				if (msgCount >= that.config.msgsToDisplay ||
+					(minutesAgo < 0 || minutesAgo >= dispTime) )  { 
+					break;
+				}
+           }
         }
 
 		if (wrapper.children.length > 0) {
