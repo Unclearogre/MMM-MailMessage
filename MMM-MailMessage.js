@@ -3,7 +3,7 @@
  * MMM-MailMessage
  *
  * This module looks for e-mails set to a specific address and displays the 
- * subject line on the MagicMirror�.  
+ * subject line on the MagicMirror².  
  *
  * It is heavily based on the MMM-Mail module by MMPieps found here:
  * https://github.com/MMPieps/MMM-Mail
