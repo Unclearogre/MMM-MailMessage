@@ -86,7 +86,7 @@ Module.register("MMM-MailMessage",{
 		const MIN_PER_DAY = 1440;
 		const TEXT_SIZES = [ "xsmall", "small", "medium", "large", "xlarge" ];
 
-
+			
 		if (TEXT_SIZES.includes(this.config.textSize)) {
 			wrapper.className = this.config.classes ? this.config.classes : "thin " + this.config.textSize + " bright pre-line";
 		} else {
@@ -269,6 +269,7 @@ Module.register("MMM-MailMessage",{
 
 					msgCount++;
 				}
+				
 				
  				if (msgCount >= that.config.msgsToDisplay ||
 					(minutesAgo < 0 || minutesAgo >= cfgTime) )  { 
