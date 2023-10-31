@@ -33,6 +33,7 @@ Module.register("MMM-MailMessage",{
 		colorWarn:      "#ffcc00",
 		dispSender:     '',
 		dispSendPunc:   " ",
+		textSize:       "large",
 	},
 	messages: [],	//The storage for the Mails
 	
@@ -79,12 +80,20 @@ Module.register("MMM-MailMessage",{
 
 	getDom: function(){
         var wrapper = document.createElement("div");
-		wrapper.className = this.config.classes ? this.config.classes : "thin xlarge bright pre-line";
 
 // ! = Important (default = red), + = Good News (def = green), * = Warn (Def = Yellow/Orange)
 		const MODIFIERS = [ "!", "+", "*" ]; 
 		const MIN_PER_DAY = 1440;
-		
+		const TEXT_SIZES = [ "xsmall", "small", "medium", "large", "xlarge" ];
+
+
+		if (TEXT_SIZES.includes(this.config.textSize)) {
+			wrapper.className = this.config.classes ? this.config.classes : "thin " + this.config.textSize + " bright pre-line";
+		} else {
+			wrapper.className = this.config.classes ? this.config.classes : "thin xlarge bright pre-line";
+		}
+
+
 		console.log("Starting MailMessage");
 		
         var that = this;

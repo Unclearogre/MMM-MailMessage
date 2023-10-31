@@ -82,6 +82,8 @@ The syntax for the duration is **[dd:mmmm]** where _dd_ is the number of days an
 | colorWarn | Specifies the color for messages marked as Warnings. | String | #ffcc00 (Yellow) |
 | dispSender | If set, will add the sender's name to the message along with the punctuation set in dispSendPunc. Valid Values: prefix, suffix | String | None |
 | dispSendPunc | Defines the punctuation (including spaces) to be included between the sender name and the message, if dispSender is set. The suggestion is ": " (colon, space) for prefix and " - " (space, hyphen, space) for suffix.  | String | " " (a single space) |
+| textSize | Sets the size of the text. 
+Valid values are "xsmall", "small", "medium", "large", or "xlarge". | String | large |
 
 
 ## validSenders Array
