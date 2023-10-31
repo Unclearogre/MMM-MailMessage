@@ -94,21 +94,16 @@ Module.register("MMM-MailMessage",{
         {
 
 //-----------------------------------------------------------------------------
-//  We're using the slice method to get the first N messages where N is 
-//  the msgsToDisplay option from the config file.  The default value is 2.
+//  We're using a for/of loop to cycle through the new messages.  We're not 
+//  the slice method to get the first N messages because some messages might 
+//  have expired or have come from an unauthorized sender.  Instead, we want to 
+//  keep going until we hit the limit (msgsToDisplay) or we find one that was 
+//  sent prior to the max time (minsToDisplay & daysToDisplay).  
 
-/*  Debug
-			for (let thisMail of this.messages) {
-				console.log("Message Found - Subject: " + thisMail.subject);
-				console.log("                Date:    " + thisMail.date);
-			}
-*/
-
-
-//            this.messages.slice(0,this.config.msgsToDisplay).forEach(function (mailObj) {
 			for (let thisMail of this.messages) {
 
-                var subject = thisMail.subject.replace(/[\['"\]]+/g,"");
+//                var subject = thisMail.subject.replace(/[\['"\]]+/g,"");
+                var subject = thisMail.subject.replace(/['"]+/g,"");
 
 				console.log("Message Found - Subject: " + subject);
 				console.log("                Date:    " + thisMail.date);
@@ -116,69 +111,75 @@ Module.register("MMM-MailMessage",{
 				// Trim leading spaces
 				subject = subject.replace(/^\s+/gm,'');
 
-//				var daysOffset = that.config.daysToDisplay * -1;
-//				var limitDate = moment().add(daysOffset, 'days');
-//				var now = moment().add(5, 'days');
-
-//  Here we calculate how many days ago the message was sent.  0 = today.
-//				var minutesAgo = 0;
-//				minutesAgo = moment().diff(thisMail.date, "days");
+//  Here we calculate how many minutes ago the message was sent.
 				var minutesAgo = 0;
 				minutesAgo = moment().diff(thisMail.date, "minutes");
 				
-//				console.log("minutesAgo: " + minutesAgo);
-				
-//				console.log("daysToDisplay: " + that.config.daysToDisplay + "  Min per Day: " + MIN_PER_DAY + "  minsToDisplay: " + that.config.minsToDisplay);
-				
-				var dispTime = (that.config.daysToDisplay * MIN_PER_DAY) + that.config.minsToDisplay;
+				var cfgTime = (that.config.daysToDisplay * MIN_PER_DAY) + that.config.minsToDisplay;
+				var dispTime = cfgTime;
 				if (dispTime <= 0) { 
 					dispTime = 180; 
 				}
 				
-//				console.log("dispTime: " + dispTime);
 				
-/*
-//  Look for duration in "[dd:mmmm]" format
 
-					// Trim leading spaces
-					subject = subject.replace(/^\s+/gm,'');
-
-					var minDuration = -1;
-					//var subjDays = 0;
-					var subjTime = 0;
+//  Senders can specify how long a message will display on the mirror.  This
+//  code looks for a duration in "[dd:mmmm]" format at the beginning of the 
+//  e-mail subject.
+				
+				// Trim leading spaces
+				subject = subject.replace(/^\s+/gm,'');
+				
+				var minDuration = -1;
+				var subjTime = 0;
 					
-					var openBracket = subject.indexOf("<");
-					var closeBracket = subject.indexOf(">");
+				var openBracket = subject.indexOf("[");
+				var closeBracket = subject.indexOf("]");
+				var locColon = subject.indexOf(":");
+				if (locColon > closeBracket) {
+					locColon = -1;
+				}
 					
-					console.log("Open Bracket at: " + openBracket + "  Close Bracket at: " + closeBracket);
+//--- Debug ------------------------------------
+//					console.log("Open Bracket at: "    + openBracket + 
+//					            "  Close Bracket at: " + closeBracket + 
+//					            "  Colon at: "         + locColon + 
+//					            "  Days: "             + subject.substring(openBracket + 1, locColon - openBracket) + 
+//					            "  Mins: "             + subject.substring(openBracket + 1, closeBracket) + 
+//					                                               " (" + (openBracket + 1) + "/" + closeBracket + ")" +
+//					            " / "                  + subject.substring(locColon + 1, closeBracket) + " (" + (locColon + 1) + "/" + (closeBracket) + ")");
+//					            var dayslen = locColon - openBracket;
+//					console.log("  Days - start: " + (openBracket + 1) + "  Len: " + (locColon - openBracket) + " / " + dayslen);
+//----------------------------------------------
 					
-					if (openBracket  >= 0 && openBracket  <= 1 &&
-						closeBracket <= 6 && closeBracket >  0 &&
-						openBracket  <  closeBracket				) {
-						var locColon = subject.indexOf(":");
-						if (locColon < 0) { 
-							subjTime = +subject.substring(openBracket + 1,closeBracket - 1);
-						} else {
-							// subjDays = +subject.substring(openBracket + 1,locColon - 1);
-							subjTime = +subject.substring(locColon + 1,closeBracket - 1) + (+subject.substring(openBracket + 1,locColon - 1) * 1440);
-						}
-						if (openBracket <= 0) {
-							leadSubject = "";
-						} else {
-							leadSubject = subject.substring(0, openBracket)
-						}
-						
-						console.log("Lead Subject: " + leadSubject + "  Subject rem: " + subject.substring(closeBracket + 1, subject.length));
-						
-						subject = leadSubject + subject.substring(closeBracket + 1, subject.length);
-						if (dispTime > subjTime) {
-							dispTime = subjTime;
-						}
+				//  The opening bracket must be in the first 6 characters and 
+				//  the closing bracket must be in the first 12 to avoid trying
+				//  to interpret brackets in the actual subject.
+				if (openBracket  >= 0  && openBracket  <= 6 &&
+					closeBracket <= 12 && closeBracket >  0 &&
+					openBracket  <  closeBracket				) {
+					if (locColon >= 0 && locColon < closeBracket) {
+						subjTime = +subject.substring(locColon + 1, closeBracket) + (+subject.substring(openBracket + 1, locColon) * 1440);
+					} else {
+						subjTime = +subject.substring(openBracket + 1, closeBracket);
+					}
+					if (dispTime > subjTime) {
+						dispTime = subjTime;
 					}
 
-					// Trim leading spaces
-					subject = subject.replace(/^\s+/gm,'');
-*/
+					//  Here we remove the time info from the subject
+					if (openBracket <= 0) {
+						leadSubject = "";
+					} else {
+						leadSubject = subject.substring(0, openBracket)
+					}
+					subject = leadSubject + subject.substring(closeBracket + 1, subject.length);
+				}
+
+				// Trim leading spaces
+				subject = subject.replace(/^\s+/gm,'');
+
+				
 
 //  Now we go through the list of valid senders to make sure the message came
 //  from someone allowed to post messages.  If not, we ignore it. 
@@ -273,10 +274,11 @@ Module.register("MMM-MailMessage",{
 					msgCount++;
 				}
 				
-				console.log("Checking msg cnt: " + msgCount);
+				console.log("Checking msg cnt: " + msgCount + "   minutesAgo: " + minutesAgo + 
+				            "   cfgTime: " + cfgTime + "   dispTime: " + dispTime);
 				
  				if (msgCount >= that.config.msgsToDisplay ||
-					(minutesAgo < 0 || minutesAgo >= dispTime) )  { 
+					(minutesAgo < 0 || minutesAgo >= cfgTime) )  { 
 					break;
 				}
            }
