@@ -114,8 +114,8 @@ Module.register("MMM-MailMessage",{
 //                var subject = thisMail.subject.replace(/[\['"\]]+/g,"");
                 var subject = thisMail.subject.replace(/['"]+/g,"");
 
-				console.log("Message Found - Subject: " + subject);
-				console.log("                Date:    " + thisMail.date);
+//				console.log("Message Found - Subject: " + subject);
+//				console.log("                Date:    " + thisMail.date);
 				
 				// Trim leading spaces
 				subject = subject.replace(/^\s+/gm,'');
@@ -149,17 +149,6 @@ Module.register("MMM-MailMessage",{
 					locColon = -1;
 				}
 					
-//--- Debug ------------------------------------
-//					console.log("Open Bracket at: "    + openBracket + 
-//					            "  Close Bracket at: " + closeBracket + 
-//					            "  Colon at: "         + locColon + 
-//					            "  Days: "             + subject.substring(openBracket + 1, locColon - openBracket) + 
-//					            "  Mins: "             + subject.substring(openBracket + 1, closeBracket) + 
-//					                                               " (" + (openBracket + 1) + "/" + closeBracket + ")" +
-//					            " / "                  + subject.substring(locColon + 1, closeBracket) + " (" + (locColon + 1) + "/" + (closeBracket) + ")");
-//					            var dayslen = locColon - openBracket;
-//					console.log("  Days - start: " + (openBracket + 1) + "  Len: " + (locColon - openBracket) + " / " + dayslen);
-//----------------------------------------------
 					
 				//  The opening bracket must be in the first 6 characters and 
 				//  the closing bracket must be in the first 12 to avoid trying
@@ -204,8 +193,6 @@ Module.register("MMM-MailMessage",{
 				if (selSender.length > 0 && 
 				   (minutesAgo >= 0 && minutesAgo <= dispTime) ) {
 
-					console.log("Found e-mail with valid sender and time");
-					
 	                const messageWrapper = document.createElement("span");
 
 
@@ -282,9 +269,6 @@ Module.register("MMM-MailMessage",{
 
 					msgCount++;
 				}
-				
-				console.log("Checking msg cnt: " + msgCount + "   minutesAgo: " + minutesAgo + 
-				            "   cfgTime: " + cfgTime + "   dispTime: " + dispTime);
 				
  				if (msgCount >= that.config.msgsToDisplay ||
 					(minutesAgo < 0 || minutesAgo >= cfgTime) )  { 
