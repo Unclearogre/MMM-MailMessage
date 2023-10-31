@@ -2,3 +2,17 @@
     padding-left: 10px;
     text-align: right;
 }
+
+.MMM-MailMessage .messagescroller {
+  margin: 0 auto;
+  width: 100%;
+  padding-top: 5px;
+  position: relative;
+  white-space: nowrap;
+  overflow: visible;
+  -webkit-animation: marquee linear infinite;
+  -moz-animation: marquee linear infinite;
+  -ms-animation: marquee linear infinite;
+  -o-animation: marquee linear infinite;
+  animation: marquee linear infinite;
+}
