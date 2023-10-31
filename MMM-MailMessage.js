@@ -233,12 +233,13 @@ Module.register("MMM-MailMessage",{
 					//cut the subject
 					if (subject.length > that.config.subjectlength)
 					{
-//						if (that.config.longScroll) {
-//							messageWrapper. = add code to make message scroll...
-				        
-							
 						subject = subject.substring(0,that.config.subjectlength);
 					}
+
+//  Possibly add option longScroll (boolean) so that long messages scroll 
+//  rather than wrap.  See MMM-NewsFeedTicker for sample.
+//					if (that.config.longScroll) {
+//						messageWrapper. = add code to make message scroll...
 
 
 //-----------------------------------------------------------------------------
