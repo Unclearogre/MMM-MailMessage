@@ -48,6 +48,7 @@ To use MMM-MailMessage, add it to the modules array in the config/config.js file
 ```
 It probably works best in one of the full-width sections (top_bar, bottom_bar, upper_third, middle_center, and lower_third) but you do you, boo.
 In addition, you will need an e-mail address to which messages can be sent.  Having my own domain name with unlimited e-mail addresses available to me, I simply created one that made sense to me in this context.  It could, however, very easily be an e-mail account with Google, Yahoo, or any other free service that allows for imap message access.
+
 ## Usage
 To add a message to your MagicMirror², send an e-mail to the specified e-mail address with the message in the subject line.  Note that the body of the e-mail is ignored by this module.
 If the subject line starts with one of the allowed modifiers, the color of the message will be changed accordingly.  At this time, the modifers are:
@@ -56,6 +57,9 @@ If the subject line starts with one of the allowed modifiers, the color of the m
 | ! | Exclamation Point | Important Message | #ff0000 (Red) |
 | + | Plus Sign | Good News | #00ff00 (Green) |
 | * | Asterisk | Warning | #ffcc00 (Yellow) |
+In addition to the modifiers, the duration of the message can be overridden by including a number of days and minutes at the start of the message subject.  Note that this time cannot be longer than the duration set in the config file.  That is, if the config file is set for messages to display for 1 day, then an individual message cannot exceed that limit.
+The syntax for the duration is *[dd:mmmm]* where _dd_ is the number of days and _mmmm_ is the number of minutes.  So, to have a message display for one and a half days (36 hours), you would use *[1:720]*.  For a message that would last 45 minutes, use *[45]*.  Note that the days parameter is optional but if included, it must be followed with a colon.  Leading zeroes are not required.  Days can be a maximum of 99 and minutes can be a maximum of 9999.  Again, however, note that this duration cannot exceed the duration set in the config file via the daysToDisplay and minsToDisplay options.
+
 ## Configuration Options
 | Option  | Description | Type | Default |
 | ------- | --- | --- | --- |
