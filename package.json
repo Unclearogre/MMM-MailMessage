@@ -1,6 +1,8 @@
 {
-  "name": "MMM-MailMessage",
-  "description": "Module to display messages from the subjects of incoming e-mail.",
+  "name": "mmm-mailmessage",
+  "version": "0.0.1",
+  "description": "MagicMirror² module to display messages from the subjects of incoming e-mail.",
+  "license": "MIT",
   "keywords": [
     "email",
     "mirror",
@@ -9,9 +11,12 @@
     "smart mirror",
     "mirror announcements"
   ],
-  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Unclearogre/MMM-MailMessage"
+  },
   "dependencies": {
-    "util": "^0.10.0",
-    "emailjs-imap-client": "^2.0.0"
+    "util": "^0.12.5",
+    "emailjs-imap-client": "^2.0.3"
   }
 }
